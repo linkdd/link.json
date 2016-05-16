@@ -15,15 +15,43 @@ from six import string_types, raise_from
     conf=category('JSONSCHEMA')
 )
 class JsonSchema(object):
+    """
+    Helper class used to validate data with the JSON Schema specification.
+
+    See: http://json-schema.org
+    """
+
     def __init__(self, *args, **kwargs):
         super(JsonSchema, self).__init__(*args, **kwargs)
 
         self.resolver = JsonResolver()
 
     def get(self, url):
+        """
+        Get schema pointed by URL.
+
+        :param url: URL pointing to a schema
+        :type url: str
+
+        :returns: Schema
+        :rtype: dict
+        """
+
         return self.resolver({'$ref': url})
 
     def validate(self, schema_or_url, data):
+        """
+        Validate data against schema.
+
+        :param schema_or_url: Schema used for validation, or URL pointing to it
+        :type schema_or_url: dict or str
+
+        :param data: Data to validate
+        :type data: any
+
+        :throws: JsonValidationError
+        """
+
         if isinstance(schema_or_url, string_types):
             schema = self.get(schema_or_url)
 
@@ -40,6 +68,19 @@ class JsonSchema(object):
             )
 
     def isvalid(self, schema_or_url, data):
+        """
+        Check if data is validated by schema.
+
+        :param schema_or_url: Schema used for validation, or URL pointing to it
+        :type schema_or_url: dict or str
+
+        :param data: Data to validate
+        :type data: any
+
+        :returns: ``True`` if data is valid, ``False`` otherwise
+        :rtype: bool
+        """
+
         try:
             self.validate(schema_or_url, data)
 

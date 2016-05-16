@@ -10,4 +10,4 @@ link.json
 
 See documentation_ for more informations.
 
-.. _documentation: https://linkjson.readthedocs.org
+.. _documentation: https://linkjson.readthedocs.io

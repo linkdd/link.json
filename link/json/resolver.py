@@ -14,7 +14,23 @@ import json
     conf=category('JSONRESOLVER')
 )
 class JsonResolver(object):
+    """
+    Resolve JSON references.
+
+    See: https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03
+    """
+
     def resolve(self, url):
+        """
+        Returns document pointed by URL.
+
+        :param url: URL pointing to a JSON document
+        :type url: str
+
+        :returns: Pointed document or value
+        :rtype: any
+        """
+
         middleware = fromurl(url)
         data = json.loads(middleware.get())
 
@@ -24,6 +40,16 @@ class JsonResolver(object):
         return data
 
     def _resolve_nested(self, data):
+        """
+        Internal method for walking through data.
+
+        :param data: Data to resolve recursively
+        :type data: any
+
+        :returns: Data with nested references resolved
+        :rtype: any
+        """
+
         if isinstance(data, dict) and '$ref' in data:
             url = data.pop('$ref')
             refdata = self.resolve(url)
@@ -40,4 +66,13 @@ class JsonResolver(object):
         return data
 
     def __call__(self, data):
+        """
+        Walk through data and resolve every found reference.
+
+        :param data: Data to resolve recursively
+        :type data: any
+
+        :returns: Data with nested references resolved
+        :rtype: any
+        """
         return self._resolve_nested(data)

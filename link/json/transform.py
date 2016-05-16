@@ -16,6 +16,15 @@ from six import string_types, raise_from
     conf=category('JSONTRANSFORM')
 )
 class JsonTransform(object):
+    """
+    Apply a transformation on data.
+
+    A schema is used to validate the input data, and the output data.
+    A JSON Patch is used to apply the transformation.
+
+    See: http://jsonpatch.com
+    """
+
     @property
     def source(self):
         return self._source
@@ -50,6 +59,17 @@ class JsonTransform(object):
         self._target = value
 
     def __init__(self, source, patch, target, *args, **kwargs):
+        """
+        :param source: Source schema, or URL pointing to it
+        :type source: dict or str
+
+        :param patch: Transformation schema, or URL pointing to it
+        :type patch: dict or str
+
+        :param target: Target schema, or URL pointing to it
+        :type target: dict or str
+        """
+
         super(JsonSchema, self).__init__(*args, **kwargs)
 
         self.resolver = JsonResolver()
@@ -60,6 +80,19 @@ class JsonTransform(object):
         self.target = target
 
     def __call__(self, data):
+        """
+        Validate data against source schema, then apply transformation, and
+        finally validate resulting data against target schema.
+
+        :param data: Data to transform
+        :type data: any
+
+        :returns: Transformed data
+        :rtype: any
+
+        :throws: JsonValidationError, JsonTransformationError
+        """
+
         self.source.validate(data)
 
         try:

@@ -18,6 +18,10 @@ DEFAULT_SCHEMA = 'http://hyperschema.org/mediatypes/collection-json.json'
     )
 )
 class CollectionJSONResponse(object):
+    """
+    Helper class used to generate valid Collection+JSON objects.
+    """
+
     def __init__(
         self,
         href,
@@ -28,6 +32,26 @@ class CollectionJSONResponse(object):
         error=None,
         *args, **kwargs
     ):
+        """
+        :param href: Base URL
+        :type href: str
+
+        :param links: Optional list of links
+        :type links: list
+
+        :param items: Optional list of items
+        :type items: list
+
+        :param queries: Optional list of queries
+        :type queries: list
+
+        :param template: Optional item template
+        :type template: dict
+
+        :param error: Optional error
+        :type error: dict
+        """
+
         super(CollectionJSONResponse, self).__init__(*args, **kwargs)
 
         self.href = href
@@ -40,6 +64,13 @@ class CollectionJSONResponse(object):
         self.validator = JsonSchema()
 
     def json(self):
+        """
+        Generate JSON object.
+
+        :returns: Collection+JSON object
+        :rtype: dict
+        """
+
         base = {
             'collection': {
                 'version': self.version,
@@ -75,6 +106,32 @@ def generate_collection_response(
     template=None,
     error=None
 ):
+    """
+    Helper instantiating a ``CollectionJSONResponse`` class using the default
+    schema.
+
+    :param href: Base URL
+    :type href: str
+
+    :param links: Optional list of links
+    :type links: list
+
+    :param items: Optional list of items
+    :type items: list
+
+    :param queries: Optional list of queries
+    :type queries: list
+
+    :param template: Optional item template
+    :type template: dict
+
+    :param error: Optional error
+    :type error: dict
+
+    :returns: Collection+JSON object
+    :rtype: dict
+    """
+
     resp = CollectionJSONResponse(
         href,
         links=links,
