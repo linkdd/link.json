@@ -21,24 +21,6 @@ class JsonSchema(object):
     See: http://json-schema.org
     """
 
-    def __init__(self, *args, **kwargs):
-        super(JsonSchema, self).__init__(*args, **kwargs)
-
-        self.resolver = JsonResolver()
-
-    def get(self, url):
-        """
-        Get schema pointed by URL.
-
-        :param url: URL pointing to a schema
-        :type url: str
-
-        :returns: Schema
-        :rtype: dict
-        """
-
-        return self.resolver({'$ref': url})
-
     def validate(self, schema_or_url, data):
         """
         Validate data against schema.
@@ -53,13 +35,13 @@ class JsonSchema(object):
         """
 
         if isinstance(schema_or_url, string_types):
-            schema = self.get(schema_or_url)
+            schema = {"$ref": schema_or_url}
 
         else:
             schema = schema_or_url
 
         try:
-            validate(data, schema)
+            validate(data, schema, resolver=JsonResolver.from_schema(schema))
 
         except ValidationError as err:
             raise_from(

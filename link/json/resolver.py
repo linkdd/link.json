@@ -5,6 +5,7 @@ from b3j0f.middleware import fromurl
 
 from link.json import CONF_BASE_PATH
 
+from jsonschema import RefResolver
 from jsonpointer import resolve_pointer
 import json
 
@@ -13,75 +14,42 @@ import json
     paths='{0}/resolver.conf'.format(CONF_BASE_PATH),
     conf=category('JSONRESOLVER')
 )
-class JsonResolver(object):
+class JsonResolver(RefResolver):
     """
     Resolve JSON references.
 
     See: https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03
     """
 
-    def resolve(self, url):
+    def __init__(self, base_uri='', referrer=None, **kwargs):
+        super(JsonResolver, self).__init__(base_uri, referrer, **kwargs)
+
+        # Just make required parameters optionnal
+
+    def resolve_remote(self, uri):
+        try:
+            middleware = fromurl(uri)[0]
+
+        except ValueError:
+            result = super(JsonResolver, self).resolve_remote(uri)
+
+        else:
+            result = json.loads(middleware.get())
+
+            if middleware.fragment:
+                result = resolve_pointer(result, middleware.fragment)
+
+            if self.cache_remote:
+                self.store[uri] = result
+
+        return result
+
+    def __call__(self, ref):
         """
-        Returns document pointed by URL.
+        Helper method for resolving.
 
-        :param url: URL pointing to a JSON document
-        :type url: str
-
-        :return: Pointed document or value
+        :return: Resolved reference
         :rtype: any
         """
 
-        middleware = fromurl(url)[0]
-        data = json.loads(middleware.get())
-
-        if middleware.fragment:
-            data = resolve_pointer(data, middleware.fragment)
-
-        return data
-
-    def _resolve_nested(self, root, data):
-        """
-        Internal method for walking through data.
-
-        :param root: Data to resolve recursively
-        :type root: any
-
-        :param data: Data being resolved
-        :type data: any
-
-        :return: Data with nested references resolved
-        :rtype: any
-        """
-
-        if isinstance(data, dict) and '$ref' in data:
-            url = data.pop('$ref')
-
-            if url[0] == '#':
-                refdata = resolve_pointer(root, url[1:])
-
-            else:
-                refdata = self.resolve(url)
-
-            data = refdata
-
-        if isinstance(data, dict):
-            for key in data:
-                data[key] = self._resolve_nested(root, data[key])
-
-        elif isinstance(data, list):
-            for i in range(len(data)):
-                data[i] = self._resolve_nested(root, data[i])
-
-        return data
-
-    def __call__(self, data):
-        """
-        Walk through data and resolve every found reference.
-
-        :param data: Data to resolve recursively
-        :type data: any
-
-        :return: Data with nested references resolved
-        :rtype: any
-        """
-        return self._resolve_nested(data, data)
+        return self.resolve(ref)[1]

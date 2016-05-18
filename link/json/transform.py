@@ -32,7 +32,7 @@ class JsonTransform(object):
     @source.setter
     def source(self, value):
         if isinstance(value, string_types):
-            value = self.resolver({'$ref': value})
+            value = self.resolver(value)
 
         self._source = value
 
@@ -43,7 +43,7 @@ class JsonTransform(object):
     @patch.setter
     def patch(self, value):
         if isinstance(value, string_types):
-            value = self.resolver({'$ref': value})
+            value = self.resolver(value)
 
         self._patch = JsonPatch(value)
 
@@ -54,7 +54,7 @@ class JsonTransform(object):
     @target.setter
     def target(self, value):
         if isinstance(value, string_types):
-            value = self.resolver({'$ref': value})
+            value = self.resolver(value)
 
         self._target = value
 
