@@ -31,7 +31,7 @@ class JsonResolver(object):
         :rtype: any
         """
 
-        middleware = fromurl(url)
+        middleware = fromurl(url)[0]
         data = json.loads(middleware.get())
 
         if middleware.fragment:
