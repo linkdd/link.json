@@ -27,7 +27,7 @@ class JsonResolver(object):
         :param url: URL pointing to a JSON document
         :type url: str
 
-        :returns: Pointed document or value
+        :return: Pointed document or value
         :rtype: any
         """
 
@@ -39,29 +39,38 @@ class JsonResolver(object):
 
         return data
 
-    def _resolve_nested(self, data):
+    def _resolve_nested(self, root, data):
         """
         Internal method for walking through data.
 
-        :param data: Data to resolve recursively
+        :param root: Data to resolve recursively
+        :type root: any
+
+        :param data: Data being resolved
         :type data: any
 
-        :returns: Data with nested references resolved
+        :return: Data with nested references resolved
         :rtype: any
         """
 
         if isinstance(data, dict) and '$ref' in data:
             url = data.pop('$ref')
-            refdata = self.resolve(url)
+
+            if url[0] == '#':
+                refdata = resolve_pointer(root, url[1:])
+
+            else:
+                refdata = self.resolve(url)
+
             data = refdata
 
         if isinstance(data, dict):
             for key in data:
-                data[key] = self._resolve_nested(data[key])
+                data[key] = self._resolve_nested(root, data[key])
 
         elif isinstance(data, list):
             for i in range(len(data)):
-                data[i] = self._resolve_nested(data[i])
+                data[i] = self._resolve_nested(root, data[i])
 
         return data
 
@@ -72,7 +81,7 @@ class JsonResolver(object):
         :param data: Data to resolve recursively
         :type data: any
 
-        :returns: Data with nested references resolved
+        :return: Data with nested references resolved
         :rtype: any
         """
-        return self._resolve_nested(data)
+        return self._resolve_nested(data, data)

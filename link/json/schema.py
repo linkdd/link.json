@@ -49,7 +49,7 @@ class JsonSchema(object):
         :param data: Data to validate
         :type data: any
 
-        :throws: JsonValidationError
+        :raises JsonValidationError: if data is not validated by schema
         """
 
         if isinstance(schema_or_url, string_types):
@@ -77,7 +77,7 @@ class JsonSchema(object):
         :param data: Data to validate
         :type data: any
 
-        :returns: ``True`` if data is valid, ``False`` otherwise
+        :return: ``True`` if data is valid, ``False`` otherwise
         :rtype: bool
         """
 

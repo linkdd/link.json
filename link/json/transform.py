@@ -87,10 +87,11 @@ class JsonTransform(object):
         :param data: Data to transform
         :type data: any
 
-        :returns: Transformed data
+        :return: Transformed data
         :rtype: any
 
-        :throws: JsonValidationError, JsonTransformationError
+        :raises JsonValidationError: if source data or target data isn't valid
+        :raises JsonTransformationError: if transformation has gone wrong
         """
 
         self.source.validate(data)

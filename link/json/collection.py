@@ -67,7 +67,7 @@ class CollectionJSONResponse(object):
         """
         Generate JSON object.
 
-        :returns: Collection+JSON object
+        :return: Collection+JSON object
         :rtype: dict
         """
 
@@ -128,7 +128,7 @@ def generate_collection_response(
     :param error: Optional error
     :type error: dict
 
-    :returns: Collection+JSON object
+    :return: Collection+JSON object
     :rtype: dict
     """
 
