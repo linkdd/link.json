@@ -22,6 +22,8 @@ class CollectionJSONResponse(object):
     Helper class used to generate valid Collection+JSON objects.
     """
 
+    ITEM_ID = 'id'
+
     def __init__(
         self,
         href,
@@ -97,13 +99,85 @@ class CollectionJSONResponse(object):
 
         return base
 
+    @staticmethod
+    def template_from_schema(schema):
+        tmpl = {
+            'template': {
+                'data': []
+            }
+        }
+
+        if 'properties' in schema:
+            for propname in schema['properties']:
+                prop = schema['properties'][propname]
+
+                data = {
+                    'name': propname
+                }
+
+                if 'default' in prop:
+                    data['value'] = prop['default']
+
+                if 'title' in prop:
+                    data['prompt'] = prop['title']
+
+                elif 'description' in prop:
+                    data['prompt'] = prop['description']
+
+                tmpl['template']['data'].append(data)
+
+        return tmpl
+
+    @classmethod
+    def make_item(cls, href, document, schema=None):
+        item = {
+            'href': '{0}/{1}'.format(href, document.get(cls.ITEM_ID, '')),
+            'data': []
+        }
+
+        if schema is not None and 'links' in schema:
+            item['links'] = []
+
+            for link in schema['links']:
+                itemlink = {
+                    'href': link['href'],
+                    'rel': link['rel']
+                }
+
+                if 'title' in link:
+                    itemlink['name'] = link['title']
+
+                if 'description' in link:
+                    itemlink['prompt'] = link['description']
+
+                item['links'].append(itemlink)
+
+        for key in document:
+            data = {
+                'name': key,
+                'value': document[key]
+            }
+
+            if schema is not None and key in schema.get('properties', {}):
+                prop = schema['properties'][key]
+
+                if 'title' in prop:
+                    data['prompt'] = prop['title']
+
+                elif 'description' in prop:
+                    data['prompt'] = prop['description']
+
+            item['data'].append(data)
+
+        return item
+
 
 def generate_collection_response(
     href,
     links=None,
     items=None,
     queries=None,
-    template=None,
+    schema=None,
     error=None
 ):
     """
@@ -122,8 +196,8 @@ def generate_collection_response(
     :param queries: Optional list of queries
     :type queries: list
 
-    :param template: Optional item template
-    :type template: dict
+    :param schema: Optional item schema
+    :type schema: dict
 
     :param error: Optional error
     :type error: dict
@@ -135,9 +209,12 @@ def generate_collection_response(
     resp = CollectionJSONResponse(
         href,
         links=links,
-        items=items,
+        items=[
+            CollectionJSONResponse.make_item(href, item, schema=schema)
+            for item in items
+        ],
         queries=queries,
-        template=template,
+        template=CollectionJSONResponse.template_from_schema(schema),
         error=error
     )
 
