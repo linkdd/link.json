@@ -140,7 +140,7 @@ class CollectionJSONResponse(object):
 
             for link in schema['links']:
                 itemlink = {
-                    'href': link['href'],
+                    'href': link['href'].format(**document),
                     'rel': link['rel']
                 }
 
