@@ -22,6 +22,9 @@ class JsonResolver(RefResolver):
     """
 
     def __init__(self, base_uri='', referrer=None, **kwargs):
+        if base_uri is None:
+            base_uri = ''
+
         super(JsonResolver, self).__init__(base_uri, referrer, **kwargs)
 
         # Just make required parameters optionnal

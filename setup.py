@@ -13,7 +13,7 @@ AUTHOR = 'David Delassus'
 AUTHOR_EMAIL = 'david.jose.delassus@gmail.com'
 LICENSE = 'MIT'
 REQUIREMENTS = [
-    'b3j0f.conf==0.3.13',
+    'b3j0f.conf==0.3.15',
     'link.middleware==0.4',
     'jsonpatch==1.13',
     'jsonschema==2.5.1'
