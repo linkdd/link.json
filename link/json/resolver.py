@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from b3j0f.conf import Configurable, category
-from b3j0f.middleware import fromurl
 
+from link.middleware.core import Middleware
 from link.json import CONF_BASE_PATH
 
 from jsonschema import RefResolver
@@ -28,7 +28,7 @@ class JsonResolver(RefResolver):
 
     def resolve_remote(self, uri):
         try:
-            middleware = fromurl(uri)[0]
+            middleware = Middleware.get_middleware_by_uri(uri)
 
         except ValueError:
             result = super(JsonResolver, self).resolve_remote(uri)
