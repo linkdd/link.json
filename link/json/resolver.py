@@ -22,6 +22,9 @@ class JsonResolver(RefResolver):
     """
 
     def __init__(self, base_uri='', referrer=None, **kwargs):
+        if base_uri is None:
+            base_uri = ''
+
         super(JsonResolver, self).__init__(base_uri, referrer, **kwargs)
 
         # Just make required parameters optionnal
@@ -30,7 +33,7 @@ class JsonResolver(RefResolver):
         try:
             middleware = Middleware.get_middleware_by_uri(uri)
 
-        except ValueError:
+        except Middleware.Error:
             result = super(JsonResolver, self).resolve_remote(uri)
 
         else:
