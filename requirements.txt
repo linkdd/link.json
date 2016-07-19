@@ -1,4 +1,4 @@
 b3j0f.conf==0.3.18
-link.midleware==1.1
+link.midleware==1.3
 jsonpatch==1.13
 jsonschema==2.5.1
