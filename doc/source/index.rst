@@ -3,7 +3,7 @@ link.json
 
 **link.json** provides some utilities for JSON like:
 
- - `JSON Schema <http://json-schema.org/>`_
+ - `JSON Schema <http://json-schema.org/>`_ (validation and generation)
  - `JSON Patch <http://jsonpatch.com/>`_
  - `Collection+JSON <https://github.com/collection-json/spec>`_
  - ...

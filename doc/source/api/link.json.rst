@@ -36,6 +36,14 @@ link.json.schema module
     :undoc-members:
     :show-inheritance:
 
+link.json.generator module
+--------------------------
+
+.. automodule:: link.json.generator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 link.json.transform module
 --------------------------
 
